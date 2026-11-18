@@ -56,11 +56,21 @@ public sealed class SceneRegistry
 
 	public bool IsInitialized { get; private set; }
 
+	public bool IsStopped { get; private set; }
+
+	public void Stop()
+	{
+		IsStopped = true;
+		CurrentId = null;
+	}
+
 	/// <summary>Creates one group per key for the windows that exist at start, in the order of their first appearance.</summary>
 	public IReadOnlyList<SceneGroupSnapshot> Initialize(IEnumerable<(long Window, string Key)> windows)
 	{
 		_groups.Clear();
 		_keyOfWindow.Clear();
+		IsStopped = false;
+		CurrentId = null;
 
 		foreach (var (window, key) in windows)
 		{
@@ -212,6 +222,9 @@ public sealed class SceneRegistry
 	/// <returns>False if the scene is selected already or an app switched back right after it was hidden.</returns>
 	public bool TrySwitch(Guid? target)
 	{
+		if (IsStopped)
+			return false;
+
 		if (target == CurrentId)
 			return false;
 

@@ -25,6 +25,8 @@ public sealed class SidebarSettings
 
 	public SidebarSide Side { get; set; } = SidebarSide.Left;
 
+	public bool AutoHide { get; set; } = true;
+
 	/// <summary>Cards can be dragged out of the sidebar onto the stage to add their apps to it.</summary>
 	public bool DragToStage { get; set; } = true;
 

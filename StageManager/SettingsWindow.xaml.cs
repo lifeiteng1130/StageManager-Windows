@@ -140,6 +140,12 @@ namespace StageManager
 					new Choice<SidebarSide>(Loc.Get("Common.Right"), SidebarSide.Right)
 				});
 				Select(side, sidebar.Side);
+				Fill(sidebarVisibility, new[]
+				{
+					new Choice<bool>(Loc.Get("Sidebar.Pinned"), false),
+					new Choice<bool>(Loc.Get("Sidebar.AutoHide"), true)
+				});
+				Select(sidebarVisibility, sidebar.AutoHide);
 
 				// the values the user can choose from, plus the current one if it was set by hand in settings.json
 				Fill(sceneCount, SceneCounts.Append(sidebar.MaxScenes).Distinct().OrderBy(c => c)
@@ -319,6 +325,12 @@ namespace StageManager
 		{
 			if (hideStrategy.SelectedItem is Choice<HideStrategy> c)
 				Change(s => s.HideStrategy = c.Value);
+		}
+
+		private void SidebarVisibility_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (!_loading && sidebarVisibility.SelectedItem is Choice<bool> choice)
+				Settings.Update(s => s.Sidebar.AutoHide = choice.Value);
 		}
 
 		private void Side_SelectionChanged(object sender, SelectionChangedEventArgs e)

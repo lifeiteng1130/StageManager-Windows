@@ -123,4 +123,8 @@
   <data name="Tray.IconsAutomatic" xml:space="preserve"><value>자동 (바탕 화면 클릭 시 표시)</value></data>
   <data name="Icons.ModeDesc" xml:space="preserve"><value>StageManager가 바탕 화면의 아이콘을 숨기는 시점입니다. macOS처럼 바탕 화면을 클릭하면 모든 창이 옆으로 비켜나고 아이콘이 표시됩니다.</value></data>
   <data name="App.AlreadyRunning" xml:space="preserve"><value>StageManager가 이미 실행 중입니다. 알림 영역에서 아이콘을 찾아 보세요.</value></data>
+  <data name="Sidebar.AutoHide" xml:space="preserve"><value>자동 숨김 (화면 가장자리에서 표시)</value></data>
+  <data name="Sidebar.Pinned" xml:space="preserve"><value>항상 표시</value></data>
+  <data name="Sidebar.Visibility" xml:space="preserve"><value>표시 방식</value></data>
+  <data name="Sidebar.VisibilityDesc" xml:space="preserve"><value>항상 표시 모드는 앱 위에 표시됩니다. 자동 숨김 모드에서는 포인터를 화면 가장자리로 이동하면 표시됩니다.</value></data>
 </root>

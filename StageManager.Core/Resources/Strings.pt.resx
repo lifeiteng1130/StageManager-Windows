@@ -123,4 +123,8 @@
   <data name="Tray.IconsAutomatic" xml:space="preserve"><value>Automático (visíveis ao clicar na área de trabalho)</value></data>
   <data name="Icons.ModeDesc" xml:space="preserve"><value>Quando o StageManager oculta os ícones da área de trabalho. Como no macOS, um clique na área de trabalho afasta todas as janelas e mostra os ícones.</value></data>
   <data name="App.AlreadyRunning" xml:space="preserve"><value>O StageManager já está em execução. Procure o ícone dele na área de notificação.</value></data>
+  <data name="Sidebar.AutoHide" xml:space="preserve"><value>Ocultar automaticamente (mostrar na borda)</value></data>
+  <data name="Sidebar.Pinned" xml:space="preserve"><value>Sempre visível</value></data>
+  <data name="Sidebar.Visibility" xml:space="preserve"><value>Visibilidade</value></data>
+  <data name="Sidebar.VisibilityDesc" xml:space="preserve"><value>O modo permanente fica sobre os aplicativos. No modo automático, mova o ponteiro até a borda para mostrar a barra.</value></data>
 </root>

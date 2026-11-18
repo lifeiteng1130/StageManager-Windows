@@ -470,6 +470,15 @@
                             </StackPanel>
                         </Border>
                         <local:SettingsRow
+                            Title="{local:Loc Sidebar.Visibility}"
+                            Description="{local:Loc Sidebar.VisibilityDesc}">
+                            <ComboBox
+                                x:Name="sidebarVisibility"
+                                Width="260"
+                                ItemTemplate="{StaticResource ChoiceTemplate}"
+                                SelectionChanged="SidebarVisibility_SelectionChanged" />
+                        </local:SettingsRow>
+                        <local:SettingsRow
                             Title="{local:Loc Sidebar.Position}"
                             Description="{local:Loc Sidebar.PositionDesc}">
                             <ComboBox

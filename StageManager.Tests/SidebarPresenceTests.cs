@@ -11,12 +11,12 @@ public class SidebarPresenceTests
 		new(x, y, overlapped, hold, now);
 
 	[Fact]
-	public void Without_covering_windows_it_stays_on_screen()
+	public void Auto_hide_applies_even_without_covering_windows()
 	{
 		var p = new SidebarPresence(Left);
 
-		Assert.Equal(SidebarMode.OnScreen, p.Decide(SidebarMode.OnScreen, At(900, overlapped: false)));
-		Assert.Equal(SidebarMode.OnScreen, p.Decide(SidebarMode.OffScreen, At(900, overlapped: false)));
+		Assert.Equal(SidebarMode.OffScreen, p.Decide(SidebarMode.OnScreen, At(900, overlapped: false)));
+		Assert.Equal(SidebarMode.OffScreen, p.Decide(SidebarMode.OffScreen, At(900, overlapped: false)));
 	}
 
 	[Fact]
@@ -128,7 +128,25 @@ public class SidebarPresenceTests
 	{
 		var p = new SidebarPresence(Left);
 
-		Assert.Equal(SidebarMode.OnScreen, p.Decide(SidebarMode.Flyover, At(900, overlapped: false)));
+		Assert.Equal(SidebarMode.OffScreen, p.Decide(SidebarMode.Flyover, At(900, overlapped: false)));
 		Assert.Equal(SidebarMode.Flyover, p.Decide(SidebarMode.Flyover, At(100, overlapped: false)));
+	}
+
+	[Fact]
+	public void Pinned_mode_restores_and_keeps_sidebar_visible_away_from_edge()
+	{
+		var p = new SidebarPresence(Left);
+		Assert.Equal(SidebarMode.Flyover, p.Decide(SidebarMode.OffScreen, At(900), autoHide: false));
+		Assert.Equal(SidebarMode.Flyover, p.Decide(SidebarMode.Flyover, At(900, now: 50), autoHide: false));
+		Assert.Equal(SidebarMode.OffScreen, p.Decide(SidebarMode.Flyover, At(900, now: 51), autoHide: true));
+	}
+
+	[Fact]
+	public void Visibility_preference_survives_settings_serialization()
+	{
+		var settings = new AppSettings();
+		Assert.True(settings.Sidebar.AutoHide);
+		settings.Sidebar.AutoHide = false;
+		Assert.False(settings.Clone().Sidebar.AutoHide);
 	}
 }

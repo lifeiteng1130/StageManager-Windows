@@ -123,4 +123,8 @@
   <data name="Tray.IconsAutomatic" xml:space="preserve"><value>自动（单击桌面时显示）</value></data>
   <data name="Icons.ModeDesc" xml:space="preserve"><value>StageManager 何时隐藏桌面上的图标。与 macOS 一样，单击桌面会把所有窗口移到一旁并显示图标。</value></data>
   <data name="App.AlreadyRunning" xml:space="preserve"><value>StageManager 已在运行。请在通知区域查找它的图标。</value></data>
+  <data name="Sidebar.AutoHide" xml:space="preserve"><value>自动隐藏（鼠标靠近边缘时显示）</value></data>
+  <data name="Sidebar.Pinned" xml:space="preserve"><value>始终显示</value></data>
+  <data name="Sidebar.Visibility" xml:space="preserve"><value>显示方式</value></data>
+  <data name="Sidebar.VisibilityDesc" xml:space="preserve"><value>始终显示会悬浮于应用之上；自动隐藏时，将鼠标移到屏幕边缘即可展开。</value></data>
 </root>

@@ -123,4 +123,8 @@
   <data name="Tray.IconsAutomatic" xml:space="preserve"><value>自動 (デスクトップをクリックすると表示)</value></data>
   <data name="Icons.ModeDesc" xml:space="preserve"><value>StageManager がデスクトップのアイコンを隠すタイミングです。macOS と同様に、デスクトップをクリックするとすべてのウィンドウが脇へ寄り、アイコンが表示されます。</value></data>
   <data name="App.AlreadyRunning" xml:space="preserve"><value>StageManager はすでに実行中です。通知領域のアイコンを探してください。</value></data>
+  <data name="Sidebar.AutoHide" xml:space="preserve"><value>自動的に隠す（画面端で表示）</value></data>
+  <data name="Sidebar.Pinned" xml:space="preserve"><value>常に表示</value></data>
+  <data name="Sidebar.Visibility" xml:space="preserve"><value>表示方法</value></data>
+  <data name="Sidebar.VisibilityDesc" xml:space="preserve"><value>常時表示ではアプリの手前に表示します。自動非表示ではポインターを画面端に移動すると表示します。</value></data>
 </root>

@@ -95,6 +95,21 @@ namespace StageManager
 
 			Log.Info($"Starting StageManager (data directory: {AppPaths.DataDirectory})");
 
+			if (Array.Exists(e.Args, arg => string.Equals(arg, "--restore", StringComparison.OrdinalIgnoreCase)))
+			{
+				StartupUri = null;
+				StageManager.Native.Parking.Recover();
+				BringBackWindows();
+				var icons = new StageManager.Desktop();
+				var policy = new DesktopIconsPolicy(icons,
+					new FileDesktopIconsState(Path.Combine(AppPaths.DataDirectory, "desktop-icons.state")),
+					() => Settings.Current.DesktopIcons);
+				policy.Start();
+				policy.Stop();
+				Shutdown();
+				return;
+			}
+
 			Loc.Follow(Settings);
 			StageManager.Native.ResourceWatch.Start();
 
@@ -104,6 +119,7 @@ namespace StageManager
 		protected override void OnExit(ExitEventArgs e)
 		{
 			Log.Info($"Exiting StageManager (exit code {e.ApplicationExitCode})");
+			BringBackWindows();
 			base.OnExit(e);
 		}
 	}

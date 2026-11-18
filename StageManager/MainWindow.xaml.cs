@@ -164,6 +164,7 @@ namespace StageManager
 
 			var foreground = Win32.GetForegroundWindow();
 			var foregroundScene = SceneManager.FindSceneForWindow(foreground);
+			foregroundScene ??= SceneManager.GetScenes().FirstOrDefault();
 			if (foregroundScene is object)
 				await SceneManager.SwitchTo(foregroundScene).ConfigureAwait(true);
 		}
@@ -1077,7 +1078,7 @@ namespace StageManager
 			// aside and comes back at the screen edge, so the desktop and its icons are free
 			var overlapped = _overlapped || SceneManager?.IsDesktopView == true;
 			var input = new SidebarInput(cursor.X, cursor.Y, overlapped, hold, _clock.Elapsed.TotalSeconds, Summon: _picker.IsActive);
-			Mode = _presence!.Decide(Mode, input);
+			Mode = _presence!.Decide(Mode, input, App.Settings.Current.Sidebar.AutoHide);
 
 			// a window that came to the front since may cover it, lift it above again. Not while windows fly or a card is dragged:
 			// those overlays have to stay above the sidebar. Once they are gone it is lifted again

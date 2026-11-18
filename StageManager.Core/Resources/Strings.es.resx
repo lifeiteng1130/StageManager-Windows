@@ -123,4 +123,8 @@
   <data name="Tray.IconsAutomatic" xml:space="preserve"><value>Automático (visibles al hacer clic en el escritorio)</value></data>
   <data name="Icons.ModeDesc" xml:space="preserve"><value>Cuándo oculta StageManager los iconos del escritorio. Como en macOS, un clic en el escritorio aparta todas las ventanas y los muestra.</value></data>
   <data name="App.AlreadyRunning" xml:space="preserve"><value>StageManager ya se está ejecutando. Busca su icono en el área de notificaciones.</value></data>
+  <data name="Sidebar.AutoHide" xml:space="preserve"><value>Ocultar automáticamente (mostrar en el borde)</value></data>
+  <data name="Sidebar.Pinned" xml:space="preserve"><value>Siempre visible</value></data>
+  <data name="Sidebar.Visibility" xml:space="preserve"><value>Visibilidad</value></data>
+  <data name="Sidebar.VisibilityDesc" xml:space="preserve"><value>Siempre visible aparece sobre las aplicaciones. En modo automático, acerque el puntero al borde para mostrar la barra.</value></data>
 </root>

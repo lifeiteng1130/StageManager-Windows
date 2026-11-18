@@ -1,3 +1,44 @@
+# StageManager Windows 定制版
+
+基于 [awaescher/StageManager](https://github.com/awaescher/StageManager) 修改的 Windows 台前调度工具。保留上游 MIT 许可证与版权声明，本仓库不是上游官方发行版。
+
+## 下载与使用
+
+前往 [Releases](https://github.com/lifeiteng1130/StageManager-Windows/releases) 下载 Windows x64 便携 ZIP，完整解压后运行 `StageManager.exe`。已包含 .NET 运行时，无需额外安装。支持 Windows 10 2004 或更新版本。
+
+- 自动识别桌面窗口，按应用创建场景。
+- 点击侧边卡片切换整组窗口；Shift + 点击其他卡片将其加入当前组，也可拖拽合并。
+- 托盘右键 → 设置 → 侧边栏 → 显示方式，可选择“始终显示”或“自动隐藏”。常驻模式悬浮在应用之上，不自动调整应用宽度。
+- 正常退出请使用托盘菜单。若上次异常退出，可在进程结束后运行 `恢复窗口.cmd`。
+- 请勿同时运行 SillDeck 或其他 StageManager 实例。
+
+## 本仓库修改
+
+- 增加侧边栏常驻/自动隐藏设置，并持久化保存。
+- 退出生命周期保护，避免未完成的场景切换再次隐藏窗口；逐窗口恢复失败隔离。
+- 启动初始场景回退，以及接管前最小化状态的退出恢复。
+- 增加便携数据目录 `Data`、恢复入口和独立版打包脚本。
+
+自动接管、多应用分组、实时预览和整组切换的主要实现来自上游。基础提交：`9a401a64818c286c8e64782f42b4779f64214569`。
+
+## 开发与验证
+
+需要 .NET 10 SDK 和 Windows：
+
+```powershell
+dotnet test StageManager.Tests/StageManager.Tests.csproj
+.\publish-portable.ps1 -DotnetPath dotnet -OutputDirectory .\Artifacts
+```
+
+最近本地验证：578 项测试通过，Windows x64 自包含发布及 WPF 启动自检通过。真实桌面交互兼容性仍需实际验证；多屏独立调度、跨重启分组恢复尚不在本定制版范围。
+
+`portable.flag` 启用便携模式，设置和恢复日志写入程序旁的 `Data` 目录。请勿将运行数据提交到仓库。
+
+## 许可和来源
+
+MIT，原版权：Copyright (c) 2022 Andreas Wäscher，完整内容见 [LICENSE](LICENSE)。下面保留上游项目介绍。
+
+---
 # Stage Manager for Windows
 
 This is an experimental approach to bring the macOS [Stage Manager](https://support.apple.com/en-us/HT213315) to Microsoft Windows.

@@ -21,8 +21,8 @@ public readonly record struct SidebarInput(double MouseX, double MouseY, bool Ov
 /// <summary>
 /// Decides when the sidebar shows, hides or flies over the windows. Pure logic.
 /// <para>
-/// The sidebar never stays "on screen" below a window that covers it: then it would be invisible and the screen edge could not bring it back.
-/// It hides only after the pointer has been away for a moment, so a pointer that slips off its edge does not make it flicker.
+/// Pinned mode stays above applications. Auto-hide mode reveals at the screen edge and hides only after the pointer
+/// has been away for a moment, so a pointer that slips off its edge does not make it flicker.
 /// </para>
 /// </summary>
 public sealed class SidebarPresence
@@ -40,8 +40,10 @@ public sealed class SidebarPresence
 		_triggerZone = triggerZone;
 	}
 
-	public SidebarMode Decide(SidebarMode current, SidebarInput input)
+	public SidebarMode Decide(SidebarMode current, SidebarInput input, bool autoHide = true)
 	{
+		if (!autoHide)
+			return SidebarMode.Flyover;
 		var area = _geometry.Area;
 		var onMonitor = input.MouseY >= area.Top && input.MouseY <= area.Bottom;
 		var atEdge = input.Summon || (onMonitor && _geometry.IsInTriggerZone(input.MouseX, _triggerZone));
@@ -50,12 +52,6 @@ public sealed class SidebarPresence
 
 		if (input.Hold || atEdge || (over && visible))
 			_lastNear = input.Now;
-
-		if (!input.Overlapped)
-		{
-			// nothing covers it: it lives at its place, a flying one stays above while the pointer is on it
-			return current == SidebarMode.Flyover && (over || input.Hold) ? SidebarMode.Flyover : SidebarMode.OnScreen;
-		}
 
 		if (input.Hold && visible)
 			return SidebarMode.Flyover;

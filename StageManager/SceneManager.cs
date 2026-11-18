@@ -22,6 +22,7 @@ namespace StageManager
 		private List<Scene> _scenes;
 		private Scene _current;
 		private bool _suspend = false;
+		private readonly Dictionary<IntPtr, bool> _initialMinimized = new();
 
 		public event EventHandler<SceneChangedEventArgs> SceneChanged;
 		public event EventHandler<CurrentSceneSelectionChangedEventArgs> CurrentSceneSelectionChanged;
@@ -109,23 +110,44 @@ namespace StageManager
 			WindowsManager.UntrackedFocus += WindowsManager_UntrackedFocus;
 
 			await WindowsManager.Start();
+			foreach (var window in WindowsManager.Windows)
+				_initialMinimized[window.Handle] = window.IsMinimized;
 		}
 
 		internal void Stop()
 		{
+			if (_registry.IsStopped)
+				return;
+			_registry.Stop();
+			_suspend = true;
 			WindowsManager.Stop();
+			WindowsManager.WindowCreated -= WindowsManager_WindowCreated;
+			WindowsManager.WindowUpdated -= WindowsManager_WindowUpdated;
+			WindowsManager.WindowDestroyed -= WindowsManager_WindowDestroyed;
+			WindowsManager.UntrackedFocus -= WindowsManager_UntrackedFocus;
+			try { _overlay?.Skip(); }
+			catch (Exception ex) { Log.Error("Stopping the animation failed", ex); }
 
 			foreach (var scene in _scenes ?? new List<Scene>())
 			{
 				foreach (var w in scene.Windows)
-					WindowStrategy.Show(w);
+				{
+					try
+					{
+						WindowStrategy.Show(w);
+						if (_initialMinimized.GetValueOrDefault(w.Handle))
+							w.ShowMinimized();
+					}
+					catch (Exception ex) { Log.Error("Restoring a window on exit failed", ex); }
+				}
 			}
 
 			// whatever the scenes know about, nothing may stay out of the screen
-			Parking.RestoreAll();
-			WindowRescue.Run();
-
-			_desktopIcons.Stop();
+			try { Parking.RestoreAll(); }
+			catch (Exception ex) { Log.Error("Restoring parked windows failed", ex); }
+			try { WindowRescue.Run(); }
+			catch (Exception ex) { Log.Error("Rescuing off-screen windows failed", ex); }
+			finally { _desktopIcons.Stop(); }
 		}
 
 		private void WindowsManager_WindowUpdated(IWindow window, WindowUpdateType type)
@@ -152,6 +174,7 @@ namespace StageManager
 
 		private void WindowsManager_WindowDestroyed(IWindow window)
 		{
+			_initialMinimized.Remove(window.Handle);
 			// a window that only hides or cloaks itself (Windows Terminal does) still exists. StageManager forgets it, so it must not
 			// stay out of the screen: once it shows again nobody would bring it back
 			if (Win32.IsWindow(window.Handle))
@@ -187,6 +210,8 @@ namespace StageManager
 
 		private async void WindowsManager_WindowCreated(IWindow window, bool firstCreate)
 		{
+			if (_registry.IsStopped) return;
+			_initialMinimized.TryAdd(window.Handle, window.IsMinimized);
 			SwitchToSceneByNewWindow(window).SafeFireAndForget();
 		}
 
@@ -279,6 +304,7 @@ namespace StageManager
 		/// <param name="animate">False if the windows have been shown flying already, e.g. by dragging their card onto the stage.</param>
 		public async Task SwitchTo(Scene? scene, bool animate = true)
 		{
+			if (_registry.IsStopped) return;
 			// a switch that is still waiting for its overlay to show has to start flying first
 			await _takeoff.ConfigureAwait(true);
 
@@ -318,6 +344,12 @@ namespace StageManager
 				// nothing may vanish before its flying copy is on the screen: not the windows, not the card in the sidebar
 				if (animated is not null)
 					await animated.Overlay.WhenOnScreen().ConfigureAwait(true);
+
+				if (_registry.IsStopped)
+				{
+					animated?.Overlay.Finish();
+					return;
+				}
 
 				// with an animation the windows of the scene show up when the flight lands, not before it takes off
 				if (scene is object && animated is null)
@@ -470,7 +502,7 @@ namespace StageManager
 				}
 
 				// a newer switch may have taken over while this flight was still in the air: then these windows stay hidden
-				if (landed || !ReferenceEquals(_current, scene))
+				if (_registry.IsStopped || landed || !ReferenceEquals(_current, scene))
 					return;
 
 				landed = true;

@@ -13,7 +13,9 @@ namespace StageManager
 		{
 			var overridePath = Environment.GetEnvironmentVariable("STAGEMANAGER_DATA_DIR");
 			var path = string.IsNullOrWhiteSpace(overridePath)
-				? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "StageManager")
+				? (File.Exists(Path.Combine(AppContext.BaseDirectory, "portable.flag"))
+					? Path.Combine(AppContext.BaseDirectory, "Data")
+					: Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "StageManager"))
 				: overridePath;
 
 			Directory.CreateDirectory(path);

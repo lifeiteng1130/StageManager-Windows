@@ -123,4 +123,8 @@
   <data name="Tray.IconsAutomatic" xml:space="preserve"><value>Automatisch (sichtbar nach Klick auf den Desktop)</value></data>
   <data name="Icons.ModeDesc" xml:space="preserve"><value>Wann StageManager die Symbole auf dem Desktop ausblendet. Wie beim Mac schiebt ein Klick auf den Desktop alle Fenster beiseite und zeigt sie.</value></data>
   <data name="App.AlreadyRunning" xml:space="preserve"><value>StageManager läuft bereits. Das Symbol findest du im Infobereich der Taskleiste.</value></data>
+  <data name="Sidebar.AutoHide" xml:space="preserve"><value>Automatisch ausblenden (am Bildschirmrand anzeigen)</value></data>
+  <data name="Sidebar.Pinned" xml:space="preserve"><value>Immer sichtbar</value></data>
+  <data name="Sidebar.Visibility" xml:space="preserve"><value>Sichtbarkeit</value></data>
+  <data name="Sidebar.VisibilityDesc" xml:space="preserve"><value>Immer sichtbar schwebt über Anwendungen. Zum Einblenden im automatischen Modus den Zeiger an den Bildschirmrand bewegen.</value></data>
 </root>

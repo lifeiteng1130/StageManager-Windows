@@ -123,4 +123,8 @@
   <data name="Tray.IconsAutomatic" xml:space="preserve"><value>Otomatik (masaüstüne tıklayınca görünür)</value></data>
   <data name="Icons.ModeDesc" xml:space="preserve"><value>StageManager&apos;ın masaüstündeki simgeleri ne zaman gizleyeceği. macOS&apos;taki gibi masaüstüne tıklamak tüm pencereleri kenara çeker ve simgeleri gösterir.</value></data>
   <data name="App.AlreadyRunning" xml:space="preserve"><value>StageManager zaten çalışıyor. Simgesini bildirim alanında arayın.</value></data>
+  <data name="Sidebar.AutoHide" xml:space="preserve"><value>Otomatik gizle (kenarda göster)</value></data>
+  <data name="Sidebar.Pinned" xml:space="preserve"><value>Her zaman görünür</value></data>
+  <data name="Sidebar.Visibility" xml:space="preserve"><value>Görünürlük</value></data>
+  <data name="Sidebar.VisibilityDesc" xml:space="preserve"><value>Sabit mod uygulamaların üzerinde görünür. Otomatik modda paneli göstermek için işaretçiyi ekran kenarına taşıyın.</value></data>
 </root>
