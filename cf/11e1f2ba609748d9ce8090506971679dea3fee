@@ -1,0 +1,85 @@
+StageManager/SceneManager.cs
+  s_e1358734c7e2f8::t_1b9fb346815001 128-129,146-150
+  s_e1358734c7e2f8::t_a60fab9106ad2a 25,113-114,135-140,177,214
+  s_e1358734c7e2f8::t_1e87a25651fa78 119-122,124-127,134,141-142,213,307,348-353,505
+StageManager.Core/Resources/Strings.ko.resx
+  s_e1358734c7e2f8::t_1014e49f3a92eb 126-129
+StageManager.Core/SidebarPresence.cs
+  s_e1358734c7e2f8::t_0b0fa238d1b434 24-25
+  s_e1358734c7e2f8::t_3cd66abe79d2fc 43,45-46
+StageManager.Core/Resources/Strings.es.resx
+  s_e1358734c7e2f8::t_1014e49f3a92eb 126-129
+.github/workflows/dotnet-desktop.yml
+  s_e1358734c7e2f8::t_3e4787defa17f9 1,6,8-9,11,13,15-37
+StageManager/SettingsWindow.xaml
+  s_e1358734c7e2f8::t_3cd66abe79d2fc 473-481
+StageManager/MainWindow.xaml.cs
+  s_e1358734c7e2f8::t_3cd66abe79d2fc 1081
+  s_e1358734c7e2f8::t_1e87a25651fa78 167
+StageManager/App.xaml.cs
+  s_e1358734c7e2f8::t_1e87a25651fa78 98-112,122
+StageManager.Core/AppSettings.cs
+  s_e1358734c7e2f8::t_3cd66abe79d2fc 28-29
+StageManager.Core/Resources/Strings.fr.resx
+  s_e1358734c7e2f8::t_1014e49f3a92eb 126-129
+StageManager.Core/Resources/Strings.ja.resx
+  s_e1358734c7e2f8::t_1014e49f3a92eb 126-129
+StageManager.Core/Resources/Strings.de.resx
+  s_e1358734c7e2f8::t_1014e49f3a92eb 126-129
+StageManager.Core/Resources/Strings.resx
+  s_e1358734c7e2f8::t_98180678c2f67a 126-129
+StageManager.Core/Resources/Strings.tr.resx
+  s_e1358734c7e2f8::t_1014e49f3a92eb 126-129
+StageManager.Tests/SidebarPresenceTests.cs
+  s_e1358734c7e2f8::t_0cd105c0bbb7f0 143-151
+  s_e1358734c7e2f8::t_6a09861f7cd894 14,18-19,131,134-142
+StageManager.Core/SceneRegistry.cs
+  s_e1358734c7e2f8::t_1e87a25651fa78 59-66,72-73,225-227
+StageManager.Core/Resources/Strings.it.resx
+  s_e1358734c7e2f8::t_1014e49f3a92eb 126-129
+PORTABLE-README.zh-CN.txt
+  s_e1358734c7e2f8::t_0b0fa238d1b434 14-16
+  s_e1358734c7e2f8::t_a8ef4b76542ad5 1-13,17-36,38-40
+  s_e1358734c7e2f8::t_5f083eba5a709f 37
+StageManager.Core/Resources/Strings.pt.resx
+  s_e1358734c7e2f8::t_1014e49f3a92eb 126-129
+Restore-Windows.cmd
+  s_e1358734c7e2f8::t_a8ef4b76542ad5 1-2
+StageManager/AppPaths.cs
+  s_e1358734c7e2f8::t_1e87a25651fa78 16-18
+.gitignore
+  s_e1358734c7e2f8::t_5f083eba5a709f 351-353
+StageManager.Tests/SceneLifecycleTests.cs
+  s_e1358734c7e2f8::t_e899fe02e43d42 8-24
+  s_e1358734c7e2f8::t_74b3608252bd58 1-7,25-43
+StageManager/SettingsWindow.xaml.cs
+  s_e1358734c7e2f8::t_3cd66abe79d2fc 143-148,330-335
+StageManager.Core/Resources/Strings.zh-Hans.resx
+  s_e1358734c7e2f8::t_98180678c2f67a 126-129
+docs/local-build-plan.md
+  s_e1358734c7e2f8::t_74b3608252bd58 1-11
+publish-portable.ps1
+  s_e1358734c7e2f8::t_a8ef4b76542ad5 5
+  s_e1358734c7e2f8::t_911900df41bed7 1-4,7-11
+  s_e1358734c7e2f8::t_1b9fb346815001 6
+StageManager.Core/Resources/Strings.ru.resx
+  s_e1358734c7e2f8::t_1014e49f3a92eb 126-129
+ReadMe.md
+  s_e1358734c7e2f8::t_5f083eba5a709f 1-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cf11e1f2ba609748d9ce8090506971679dea3fee",
+  "prompts": {},
+  "sessions": {
+    "s_e1358734c7e2f8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a12f1a-8e8c-7483-b710-ceefcc5d81a3",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "ftli <ftli@leqee.com>"
+    }
+  }
+}
