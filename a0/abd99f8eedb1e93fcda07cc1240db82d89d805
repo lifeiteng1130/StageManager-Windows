@@ -1,0 +1,59 @@
+StageManager.Tests/FrameStabilityTests.cs
+  s_e1358734c7e2f8::t_20aef2a9d4d166 1-20
+StageManager/Native/WindowStack.cs
+  s_e1358734c7e2f8::t_823a69dd81e705 32-33
+StageManager/SceneManager.cs
+  s_e1358734c7e2f8::t_96711f02c01d7e 416-418
+  s_e1358734c7e2f8::t_482d46580f0f85 392-396
+  s_e1358734c7e2f8::t_20aef2a9d4d166 573-592
+  s_e1358734c7e2f8::t_323acf0342460f 309,312,323-329,331,371-374,388-391,397-415,419-421,657-660
+  s_e1358734c7e2f8::t_bfbb0fc40ccf39 150-154
+StageManager/MainWindow.xaml.cs
+  s_e1358734c7e2f8::t_323acf0342460f 82,355
+StageManager.Core/FrameStability.cs
+  s_e1358734c7e2f8::t_20aef2a9d4d166 1-16
+StageManager.Core/SceneRegistry.cs
+  s_e1358734c7e2f8::t_823a69dd81e705 223,231
+StageManager/Strategies/ScreenOffsetWindowStrategy.cs
+  s_e1358734c7e2f8::t_bfbb0fc40ccf39 19,39
+  s_e1358734c7e2f8::t_823a69dd81e705 27-30
+StageManager.Tests/SceneLifecycleTests.cs
+  s_e1358734c7e2f8::t_a7b1b2fc0175d6 7-16
+StageManager.Tests/ParkingTests.cs
+  s_e1358734c7e2f8::t_a7b1b2fc0175d6 141-142,177,182,219-245
+  s_e1358734c7e2f8::t_482d46580f0f85 246-257
+StageManager/Native/FlightOverlay.cs
+  s_e1358734c7e2f8::t_20aef2a9d4d166 25,118,312-314,345-354
+StageManager/SettingsWindow.xaml.cs
+  s_e1358734c7e2f8::t_64a888c26ce0ad 321-327
+StageManager/Strategies/NormalizeAndMinimizeWindowStrategy.cs
+  s_e1358734c7e2f8::t_823a69dd81e705 19
+  s_e1358734c7e2f8::t_bfbb0fc40ccf39 10-14
+StageManager/Native/WindowTransitionGuard.cs
+  s_e1358734c7e2f8::t_cec094364613ee 24-25
+  s_e1358734c7e2f8::t_bfbb0fc40ccf39 1-23,26-58
+StageManager/App.xaml.cs
+  s_e1358734c7e2f8::t_bfbb0fc40ccf39 121
+StageManager.Core/WindowParker.cs
+  s_e1358734c7e2f8::t_823a69dd81e705 244-245,248,268-269,271,291-292,300,303,306-307,311,313-314,317-318
+  s_e1358734c7e2f8::t_aee1ee8271858c 136,183,242,246,257
+  s_e1358734c7e2f8::t_64a888c26ce0ad 179-182,184,284
+ReadMe.md
+  s_e1358734c7e2f8::t_1e12492f774cef 21-22,35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a0abd99f8eedb1e93fcda07cc1240db82d89d805",
+  "prompts": {},
+  "sessions": {
+    "s_e1358734c7e2f8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a12f1a-8e8c-7483-b710-ceefcc5d81a3",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "ftli <ftli@leqee.com>"
+    }
+  }
+}
