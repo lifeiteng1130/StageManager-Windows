@@ -22,6 +22,7 @@ namespace StageManager.Native
 	{
 		private sealed class Item
 		{
+			public IntPtr Window { get; init; }
 			public required Pose From { get; set; }
 			public required Pose To { get; set; }
 			public Pose Current { get; set; }
@@ -114,7 +115,7 @@ namespace StageManager.Native
 		/// <summary>Prepares a window at its starting pose. Nothing moves until <see cref="Fly"/>. False if DWM gave no thumbnail for it.</summary>
 		public bool Add(IntPtr window, Pose from, Pose to)
 		{
-			var item = new Item { From = from, To = to };
+			var item = new Item { Window = window, From = from, To = to };
 
 			if (_style == FlightStyle.Windows)
 			{
@@ -308,6 +309,9 @@ namespace StageManager.Native
 
 			if (item.Thumbnail != IntPtr.Zero)
 			{
+				// Parking normalizes maximized windows. The DWM source size and borders change again on restore.
+				// A crop captured only at Add() stretches the old normal-sized image at the landing frame.
+				item.Source = WindowGeometry.FrameSourceOf(item.Thumbnail, item.Window);
 				var properties = new DWM_THUMBNAIL_PROPERTIES
 				{
 					fVisible = true,
@@ -335,6 +339,16 @@ namespace StageManager.Native
 			{
 				// a frame is a window of the screen, not of the overlay: it takes screen coordinates
 				item.Frame.Update(pose.X, pose.Y, pose.Width, pose.Height, pose.Opacity, Math.Max(2, (int)Math.Round(3 * _dpi)));
+			}
+		}
+
+		public void RefreshRestoredFrames(ISet<IntPtr> restoredWindows)
+		{
+			foreach (var item in _items)
+			{
+				if (!restoredWindows.Contains(item.Window)) continue;
+				if (WindowGeometry.FrameOf(item.Window) is Area frame)
+					Apply(item, FlightPlanner.OfFrame(frame));
 			}
 		}
 

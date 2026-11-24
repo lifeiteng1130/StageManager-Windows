@@ -138,6 +138,8 @@ public class WindowParkerTests
 		public Dictionary<long, Area> RestoredRects { get; } = new();
 
 		public bool Hung { get; set; }
+		public bool RejectMoves { get; set; }
+		public bool DeferMoves { get; set; }
 
 		public bool IsMaximized(long window) => MaximizedWindows.Contains(window);
 
@@ -172,11 +174,12 @@ public class WindowParkerTests
 		// Windows puts a maximized window back where it was
 		public bool Move(long window, Area rect, bool refreshFrame)
 		{
+			if (RejectMoves) return false;
 			if (!Windows.TryGetValue(window, out var w))
 				return false;
 
 			Moves.Add((window, rect, refreshFrame));
-			if (!MaximizedWindows.Contains(window))
+			if (!MaximizedWindows.Contains(window) && !DeferMoves)
 				Windows[window] = w with { Rect = rect };
 
 			return true;
@@ -211,6 +214,45 @@ public class WindowParkerTests
 	{
 		_placer.Windows[1] = (100, Rect, false);
 		return new WindowParker(_placer, _journal);
+	}
+
+	[Fact]
+	public void Failed_restore_keeps_journal_and_can_be_retried()
+	{
+		var parker = Create();
+		parker.Park(1);
+		_placer.RejectMoves = true;
+		Assert.False(parker.Unpark(1));
+		Assert.True(parker.IsParked(1));
+		Assert.Single(_journal.Entries);
+		_placer.RejectMoves = false;
+		Assert.True(parker.Unpark(1));
+		Assert.Empty(_journal.Entries);
+	}
+
+	[Fact]
+	public void Accepted_but_deferred_restore_is_not_forgotten()
+	{
+		var parker = Create();
+		parker.Park(1);
+		_placer.DeferMoves = true;
+		Assert.False(parker.Unpark(1));
+		Assert.Single(_journal.Entries);
+		_placer.DeferMoves = false;
+		Assert.True(parker.Unpark(1));
+	}
+
+	[Fact]
+	public void Switching_away_during_pending_restore_requeues_parking()
+	{
+		var parker = Create();
+		parker.Park(1);
+		_placer.DeferMoves = true;
+		Assert.False(parker.Unpark(1));
+		var moves = _placer.Moves.Count;
+		Assert.True(parker.Park(1));
+		Assert.Equal(moves + 1, _placer.Moves.Count);
+		Assert.False(_placer.Moves[^1].Refresh);
 	}
 
 	[Fact]

@@ -147,7 +147,11 @@ namespace StageManager
 			catch (Exception ex) { Log.Error("Restoring parked windows failed", ex); }
 			try { WindowRescue.Run(); }
 			catch (Exception ex) { Log.Error("Rescuing off-screen windows failed", ex); }
-			finally { _desktopIcons.Stop(); }
+			finally
+			{
+				WindowTransitionGuard.RestoreAll();
+				_desktopIcons.Stop();
+			}
 		}
 
 		private void WindowsManager_WindowUpdated(IWindow window, WindowUpdateType type)
@@ -302,9 +306,10 @@ namespace StageManager
 		public bool IsSwitching => _suspend || _overlay is not null;
 
 		/// <param name="animate">False if the windows have been shown flying already, e.g. by dragging their card onto the stage.</param>
-		public async Task SwitchTo(Scene? scene, bool animate = true)
+		public async Task SwitchTo(Scene? scene, bool animate = true, bool userInitiated = false)
 		{
 			if (_registry.IsStopped) return;
+			var timing = System.Diagnostics.Stopwatch.StartNew();
 			// a switch that is still waiting for its overlay to show has to start flying first
 			await _takeoff.ConfigureAwait(true);
 
@@ -315,8 +320,15 @@ namespace StageManager
 				await _flight.ConfigureAwait(true);
 			}
 
-			if (!_registry.TrySwitch(scene?.Id))
+			if (!_registry.TrySwitch(scene?.Id, userInitiated))
+			{
+				if (userInitiated && scene is not null && ReferenceEquals(scene, _current))
+				{
+					ShowInOrder(scene.Windows);
+					await VerifySceneRestored(scene);
+				}
 				return;
+			}
 
 			IsDesktopView = scene is null;
 
@@ -356,7 +368,10 @@ namespace StageManager
 					ShowInOrder(scene.Windows);
 
 				foreach (var o in otherWindows)
-					WindowStrategy.Hide(o);
+				{
+					try { WindowStrategy.Hide(o); }
+					catch (Exception ex) { Log.Error("Hiding a scene window failed", ex); }
+				}
 
 				CurrentSceneSelectionChanged?.Invoke(this, new CurrentSceneSelectionChangedEventArgs(prior, _current, animated?.PriorCardWaits == true));
 
@@ -370,6 +385,40 @@ namespace StageManager
 				takeoff.TrySetResult();
 				_suspend = false;
 			}
+			if (timing.ElapsedMilliseconds > 200)
+				Log.Warn($"Scene switch took {timing.ElapsedMilliseconds} ms (user={userInitiated}, windows={scene?.Windows.Count() ?? 0})");
+			if (scene is not null)
+				await VerifySceneRestored(scene);
+			if (userInitiated && scene is not null && !_registry.IsStopped && ReferenceEquals(_current, scene))
+			{
+				var top = scene.Windows.LastOrDefault();
+				if (top is not null) Win32.SetForegroundWindow(top.Handle);
+			}
+		}
+
+		private async Task VerifySceneRestored(Scene scene)
+		{
+			// SetWindowPos is queued on the target application's thread. Keep the journal until the move is observed.
+			foreach (var delay in new[] { 80, 160, 320, 640 })
+			{
+				await Task.Delay(delay).ConfigureAwait(true);
+				if (_registry.IsStopped || !ReferenceEquals(_current, scene) || IsSwitching) return;
+				var handles = scene.Windows.Select(w => w.Handle).ToHashSet();
+				foreach (var window in scene.Windows.ToArray())
+				{
+					try
+					{
+						if (Parking.IsParked(window.Handle) || window.IsMinimized)
+							WindowStrategy.Show(window);
+					}
+					catch (Exception ex) { Log.Error("Retrying window restoration failed", ex); }
+				}
+				if (delay == 80)
+					WindowRescue.Run(h => !handles.Contains(h) || Parking.IsParked(h));
+				if (!scene.Windows.Any(w => Parking.IsParked(w.Handle) || w.IsMinimized)) return;
+			}
+			var pending = scene.Windows.Count(w => Parking.IsParked(w.Handle));
+			if (pending > 0) Log.Warn($"Scene restore still pending for {pending} window(s); journal retained");
 		}
 
 		private Task _takeoff = Task.CompletedTask;
@@ -521,7 +570,26 @@ namespace StageManager
 
 				// the real windows and the card are drawn under the overlay before it goes, both show the same picture
 				NativeMethods.DwmFlush();
-				await Task.Delay(LandingDelay).ConfigureAwait(true);
+				var stability = new FrameStability();
+				for (var sample = 0; sample < 10; sample++)
+				{
+					await Task.Delay(30).ConfigureAwait(true);
+					if (_registry.IsStopped || !ReferenceEquals(_current, scene)) break;
+					var frames = new Dictionary<long, Area>();
+					var shown = new HashSet<IntPtr>();
+					foreach (var w in scene.Windows)
+					{
+						if (Parking.IsParked(w.Handle)) WindowStrategy.Show(w);
+						if (!Parking.IsParked(w.Handle) && !w.IsMinimized && WindowGeometry.FrameOf(w.Handle) is Area frame)
+						{
+							frames[w.Handle.ToInt64()] = frame;
+							shown.Add(w.Handle);
+						}
+					}
+					flight.Overlay.RefreshRestoredFrames(shown);
+					NativeMethods.DwmFlush();
+					if (stability.Observe(frames, scene.Windows.Count()) && sample >= 2) break;
+				}
 				NativeMethods.DwmFlush();
 			}
 			catch (Exception ex)
@@ -586,7 +654,10 @@ namespace StageManager
 			var windows = backToFront.ToList();
 
 			foreach (var w in windows)
-				WindowStrategy.Show(w);
+			{
+				try { WindowStrategy.Show(w); }
+				catch (Exception ex) { Log.Error("Showing a scene window failed", ex); }
+			}
 
 			WindowStack.Restack(windows.Select(w => w.Handle));
 		}

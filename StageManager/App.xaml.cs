@@ -118,6 +118,7 @@ namespace StageManager
 
 		protected override void OnExit(ExitEventArgs e)
 		{
+			StageManager.Native.WindowTransitionGuard.RestoreAll();
 			Log.Info($"Exiting StageManager (exit code {e.ApplicationExitCode})");
 			BringBackWindows();
 			base.OnExit(e);

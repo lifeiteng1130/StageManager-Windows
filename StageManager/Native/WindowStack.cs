@@ -29,7 +29,8 @@ namespace StageManager.Native
 		{
 			foreach (var window in backToFront.Where(w => Win32.IsWindow(w) && !Win32.IsIconic(w)))
 			{
-				var flags = Win32.SetWindowPosFlags.IgnoreMove | Win32.SetWindowPosFlags.IgnoreResize | Win32.SetWindowPosFlags.DoNotActivate;
+				var flags = Win32.SetWindowPosFlags.IgnoreMove | Win32.SetWindowPosFlags.IgnoreResize | Win32.SetWindowPosFlags.DoNotActivate
+					| Win32.SetWindowPosFlags.AsynchronousWindowPosition;
 
 				// an app that hangs must not block the switch, its window may end up out of order then
 				if (ProcessInfo.IsHung(window))

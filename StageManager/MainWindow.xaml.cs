@@ -79,7 +79,7 @@ namespace StageManager
 				if (Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
 					await SceneManager!.JoinToCurrent(scene);
 				else
-					await SceneManager!.SwitchTo(scene);
+					await SceneManager!.SwitchTo(scene, userInitiated: true);
 			});
 		}
 
@@ -352,7 +352,7 @@ namespace StageManager
 
 		private void SwitchToCard(SceneModel card)
 		{
-			SceneManager.SwitchTo(card.Scene).SafeFireAndForget(ex => Log.Error("Switching with the keyboard failed", ex));
+			SceneManager.SwitchTo(card.Scene, userInitiated: true).SafeFireAndForget(ex => Log.Error("Switching with the keyboard failed", ex));
 		}
 
 		private void SetPicked(SceneModel? model)

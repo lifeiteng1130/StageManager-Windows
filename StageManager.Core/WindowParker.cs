@@ -133,6 +133,7 @@ public sealed class WindowParker
 	private readonly IParkingJournal _journal;
 	private readonly object _lock = new();
 	private readonly List<ParkedWindow> _entries = new();
+	private readonly HashSet<long> _restoring = new();
 
 	public WindowParker(IWindowPlacer placer, IParkingJournal journal)
 	{
@@ -175,8 +176,12 @@ public sealed class WindowParker
 	{
 		lock (_lock)
 		{
-			if (_entries.Any(e => e.Window == window))
-				return true;
+			var existing = _entries.FirstOrDefault(e => e.Window == window);
+			if (existing is not null)
+			{
+				// A restore may still be queued when the user switches away again. Queue parking after it.
+				return !_restoring.Remove(window) || _placer.Move(existing.Window, existing.Parked, refreshFrame: false);
+			}
 
 			var processId = _placer.ProcessIdOf(window);
 			if (!_placer.Exists(window, processId) || _placer.IsMinimized(window))
@@ -234,13 +239,13 @@ public sealed class WindowParker
 			var entries = _entries.Where(e => e.Window == window || e.Owner == window).ToList();
 			if (entries.Count == 0)
 				return false;
+			_restoring.Add(window);
 
-			foreach (var entry in entries)
-				Bring(entry);
-
-			_entries.RemoveAll(entries.Contains);
+			var restored = entries.Where(Bring).ToList();
+			_entries.RemoveAll(restored.Contains);
+			if (restored.Count == entries.Count) _restoring.Remove(window);
 			_journal.Save(_entries);
-			return true;
+			return restored.Count == entries.Count;
 		}
 	}
 
@@ -249,6 +254,7 @@ public sealed class WindowParker
 	{
 		lock (_lock)
 		{
+			_restoring.Remove(window);
 			if (_entries.RemoveAll(e => e.Window == window) > 0)
 				_journal.Save(_entries);
 		}
@@ -259,14 +265,10 @@ public sealed class WindowParker
 	{
 		lock (_lock)
 		{
-			var restored = _entries.Count;
-
-			foreach (var entry in _entries.ToList())
-				Bring(entry);
-
-			_entries.Clear();
+			var restored = _entries.Where(Bring).ToList();
+			_entries.RemoveAll(restored.Contains);
 			_journal.Save(_entries);
-			return restored;
+			return restored.Count;
 		}
 	}
 
@@ -279,37 +281,40 @@ public sealed class WindowParker
 		{
 			var remembered = _journal.Load();
 			var restored = 0;
+			_entries.Clear();
 
 			foreach (var entry in remembered)
 			{
 				if (!_placer.Exists(entry.Window, entry.ProcessId))
 					continue;
 
-				Bring(entry);
-				restored++;
+				if (Bring(entry)) restored++;
+				else if (!_entries.Any(e => e.Window == entry.Window)) _entries.Add(entry);
 			}
 
-			_entries.Clear();
 			_journal.Save(_entries);
 			return restored;
 		}
 	}
 
-	private void Bring(ParkedWindow entry)
+	private bool Bring(ParkedWindow entry)
 	{
 		if (!_placer.Exists(entry.Window, entry.ProcessId))
-			return;
+			return true;
 
 		// a window that came back on its own, or that the user placed on the screen, stays where it is
-		if (_placer.GetRect(entry.Window) is Area now && _placer.Monitors().Any(m => FlightPlanner.Intersects(m, now)))
-			return;
+		if (_placer.GetRect(entry.Window) is Area now && now != entry.Original && IsOnScreen(now))
+			return true;
 
 		// a maximized window is maximized again where it was, the placement brings it there. A move before it would arrive after it
 		if (entry.Maximized && entry.Restored is Area restored && _placer.Maximize(entry.Window, restored))
-			return;
+			return _placer.GetRect(entry.Window) is Area maximized && IsOnScreen(maximized);
 
-		_placer.Move(entry.Window, entry.Original, refreshFrame: true);
+		return _placer.Move(entry.Window, entry.Original, refreshFrame: true)
+			&& _placer.GetRect(entry.Window) is Area moved && IsOnScreen(moved);
 	}
+
+	private bool IsOnScreen(Area rect) => _placer.Monitors().Any(m => FlightPlanner.Intersects(m, rect));
 
 	private ParkedWindow Entry(long window, int processId, long owner, Area original, Area parked) => new()
 	{

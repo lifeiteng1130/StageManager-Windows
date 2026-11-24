@@ -220,7 +220,7 @@ public sealed class SceneRegistry
 
 	/// <summary>Selects a scene. Null selects the desktop view.</summary>
 	/// <returns>False if the scene is selected already or an app switched back right after it was hidden.</returns>
-	public bool TrySwitch(Guid? target)
+	public bool TrySwitch(Guid? target, bool userInitiated = false)
 	{
 		if (IsStopped)
 			return false;
@@ -228,7 +228,7 @@ public sealed class SceneRegistry
 		if (target == CurrentId)
 			return false;
 
-		if (_guard.IsBlocked(target, CurrentId))
+		if (!userInitiated && _guard.IsBlocked(target, CurrentId))
 			return false;
 
 		CurrentId = target;

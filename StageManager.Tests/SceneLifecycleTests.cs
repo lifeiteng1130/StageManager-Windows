@@ -4,6 +4,16 @@ namespace StageManager.Tests;
 
 public class SceneLifecycleTests
 {
+	[Fact]
+	public void Explicit_click_bypasses_foreground_bounce_guard()
+	{
+		var registry = new SceneRegistry();
+		var groups = registry.Initialize(new[] { (1L, "IDEA"), (2L, "Chrome") });
+		Assert.True(registry.TrySwitch(groups[0].Id));
+		Assert.True(registry.TrySwitch(groups[1].Id));
+		Assert.False(registry.TrySwitch(groups[0].Id));
+		Assert.True(registry.TrySwitch(groups[0].Id, userInitiated: true));
+	}
     [Fact]
     public void Multiple_apps_stay_together_when_switching_and_receiving_new_windows()
     {

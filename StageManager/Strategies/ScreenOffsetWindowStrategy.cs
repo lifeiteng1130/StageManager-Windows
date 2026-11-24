@@ -16,6 +16,7 @@ namespace StageManager.Strategies
 
 		public void Show(IWindow window)
 		{
+			WindowTransitionGuard.Suppress(window.Handle);
 			// whatever way it was hidden, it comes back: parked windows are moved back, minimized ones are restored
 			if (Parking.IsParked(window.Handle))
 			{
@@ -23,7 +24,10 @@ namespace StageManager.Strategies
 
 				// the window kept its place in the stack while it was out of the screen, the ones of a scene end up above the others
 				Win32.SetWindowPos(window.Handle, Win32.HWND_TOP, 0, 0, 0, 0,
-					Win32.SetWindowPosFlags.IgnoreMove | Win32.SetWindowPosFlags.IgnoreResize | Win32.SetWindowPosFlags.DoNotActivate);
+					Win32.SetWindowPosFlags.IgnoreMove | Win32.SetWindowPosFlags.IgnoreResize | Win32.SetWindowPosFlags.DoNotActivate
+					| Win32.SetWindowPosFlags.AsynchronousWindowPosition);
+				if (window.IsMinimized)
+					Win32.ShowWindowAsync(window.Handle, Win32.SW.SW_RESTORE);
 				return;
 			}
 
@@ -32,6 +36,7 @@ namespace StageManager.Strategies
 
 		public void Hide(IWindow window)
 		{
+			WindowTransitionGuard.Suppress(window.Handle);
 			if (App.Settings.Current.HideStrategy == HideStrategy.Park && Parking.Park(window.Handle))
 				return;
 

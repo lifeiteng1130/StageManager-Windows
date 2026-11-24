@@ -318,7 +318,13 @@ namespace StageManager
 
 		private void Autostart_Click(object sender, RoutedEventArgs e)
 		{
-			MainWindow.StartsWithWindows = autostart.IsChecked == true;
+			try { MainWindow.StartsWithWindows = autostart.IsChecked == true; }
+			catch (Exception ex) when (ex is UnauthorizedAccessException or System.Security.SecurityException)
+			{
+				autostart.IsChecked = MainWindow.StartsWithWindows;
+				Log.Error("Changing startup registration was denied", ex);
+				MessageBox.Show("无法修改开机启动设置，系统或企业策略拒绝了操作。程序将继续运行。", "StageManager", MessageBoxButton.OK, MessageBoxImage.Warning);
+			}
 		}
 
 		private void HideStrategy_SelectionChanged(object sender, SelectionChangedEventArgs e)
